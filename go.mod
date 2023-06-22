@@ -3,7 +3,6 @@ module github.com/cevdetakiah/ebiten-chess
 go 1.20
 
 require (
-	github.com/hajimehoshi/ebiten v1.12.12
 	github.com/hajimehoshi/ebiten/v2 v2.5.4
 	github.com/notnil/chess v1.9.0
 )

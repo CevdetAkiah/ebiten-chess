@@ -20,7 +20,7 @@ type Game struct {
 type board struct {
 	grid         *ebiten.Image
 	validSquares []chess.Square
-	cells        map[int]*cell
+	cells        map[chess.Square]*cell
 }
 
 // each square on the grid held within the chessboard
@@ -34,15 +34,16 @@ type cell struct {
 }
 
 // update the board after user inpt
-func (g *Game) updateCellColours(sq int) {
+func (g *Game) updateCellColours(sq chess.Square) {
 	cell := g.chessboard.cells[sq]
-	piece := g.pieces[chess.Square(sq)]
+	piece := g.pieces[sq]
 	// turn on the select colour for the selected cell and reposition the piece
 	selectSquare(g, cell, piece)
 	// turn on the valid square colours
 	validSquare(g, cell, piece)
 }
 
+// TODO: fill in cell with piece image if piece is on valid square
 // show the valid squares on the board
 func validSquare(g *Game, c *cell, p *Piece) {
 	position := g.engine.Position()
@@ -60,9 +61,12 @@ func validSquare(g *Game, c *cell, p *Piece) {
 
 	// apply valid colour
 	for _, sq := range g.chessboard.validSquares {
-		cell := g.chessboard.cells[int(sq)]
+		cell := g.chessboard.cells[sq]
 		cell.valid = true
 		colourSquare(cell, g, color.RGBA{R: 0, G: 255, B: 50, A: 80}) // valid square colour
+		if piece := g.pieces[sq]; piece != nil {
+			g.positionPiece(piece, g.chessboard.cells[sq])
+		}
 	}
 }
 
@@ -84,34 +88,10 @@ func colourSquare(c *cell, g *Game, colour color.Color) {
 	c.squareColour = originalColour
 }
 
-// start a new game
-func NewGame() *Game {
-	eng := chess.NewGame()
-
-	game := &Game{
-		gamestart: true,
-		engine:    eng,
-		pieces:    make(map[chess.Square]*Piece),
-	}
-	// set up the chessboard
-	chessboard := createChessboard(game)
-	game.chessboard = chessboard
-	game.gamestart = true
-
-	// place the pieces on the chessboard
-	for _, piece := range game.pieces {
-		cell := game.chessboard.cells[int(piece.location)]
-		game.positionPiece(piece, cell)
-	}
-
-	return game
-
-}
-
 // draws the chessboard and loads the pieces into the game with their positions
 func createChessboard(g *Game) *board {
 	chessboard := &board{}
-	chessboard.cells = make(map[int]*cell, rows*columns)
+	chessboard.cells = make(map[chess.Square]*cell, rows*columns)
 
 	// Create a new image for the grid
 	grid := ebiten.NewImage(screenWidth, screenHeight)
@@ -139,7 +119,7 @@ func createChessboard(g *Game) *board {
 			fensq := squareOffset(column, row)
 			cell.position = fensq
 			// add cell to the map
-			chessboard.cells[int(fensq)] = cell
+			chessboard.cells[fensq] = cell
 			// Get the piece using the board position
 			piece := FEN[fensq]
 

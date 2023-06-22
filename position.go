@@ -34,3 +34,9 @@ func isValidSquare(squares []chess.Square, target chess.Square) bool {
 	}
 	return false
 }
+
+func getChessGridCoordinates(x, y int) (int, int) {
+	column := x / squareWidth
+	row := y / squareHeight
+	return column, row
+}
