@@ -8,29 +8,10 @@ import (
 	"github.com/notnil/chess"
 )
 
-type Game struct {
-	buttonPress   bool
-	chessboard    *board
-	gamestart     bool
-	engine        *chess.Game
-	pieces        map[chess.Square]*Piece
-	selectedPiece *Piece
-}
-
 type board struct {
 	grid         *ebiten.Image
 	validSquares []chess.Square
 	cells        map[chess.Square]*cell
-}
-
-// each square on the grid held within the chessboard
-type cell struct {
-	squareColour color.Color
-	selected     bool
-	valid        bool
-	position     chess.Square
-	xPos         float32
-	yPos         float32
 }
 
 // update the board after user inpt
