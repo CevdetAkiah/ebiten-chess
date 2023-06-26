@@ -18,10 +18,10 @@ type cell struct {
 }
 
 func (c *cell) turnOffColours(g *Game) {
+	piece := g.pieces[c.position]
 	if c.selected {
 		c.selected = false
 		vector.DrawFilledRect(g.chessboard.grid, c.xPos, c.yPos, squareWidth, squareHeight, c.squareColour, false)
-		piece := g.pieces[c.position]
 		if piece != nil {
 			g.positionPiece(piece, c)
 		}
@@ -29,5 +29,8 @@ func (c *cell) turnOffColours(g *Game) {
 	if c.valid {
 		c.valid = false
 		vector.DrawFilledRect(g.chessboard.grid, c.xPos, c.yPos, squareWidth, squareHeight, c.squareColour, false)
+		if piece != nil {
+			g.positionPiece(piece, c)
+		}
 	}
 }

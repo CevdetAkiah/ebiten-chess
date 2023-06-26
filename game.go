@@ -34,6 +34,7 @@ func (g *Game) Update() error {
 		mouseX, mouseY := ebiten.CursorPosition()
 		chessX, chessY := getChessGridCoordinates(mouseX, mouseY)
 
+		// Make the move
 		// if user has already selected a piece and the clicked square is valid, make the move
 		if g.selectedPiece != nil {
 			moveTo := squareOffset(chessX, chessY)
