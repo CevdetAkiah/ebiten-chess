@@ -1,6 +1,7 @@
 package main
 
 import (
+	"image/color"
 	"io/ioutil"
 	"log"
 
@@ -9,18 +10,20 @@ import (
 )
 
 type Label struct {
-	font font.Face
-	text string
-	x    int
-	y    int
+	font   font.Face
+	text   string
+	colour color.Color
+	x      int
+	y      int
 }
 
-func newLabel(font font.Face, labelString string, x int, y int) *Label {
+func newLabel(font font.Face, labelString string, colour color.Color, x int, y int) *Label {
 	label := &Label{
-		font: font,
-		text: labelString,
-		x:    x,
-		y:    y,
+		font:   font,
+		text:   labelString,
+		colour: colour,
+		x:      x,
+		y:      y,
 	}
 	return label
 }

@@ -18,6 +18,15 @@ type Piece struct {
 	image     *ebiten.Image
 }
 
+// update the piece map with the new piece positions
+func (g *Game) updatePieces(moveTo chess.Square) {
+	// update the pieces map
+	g.pieces[g.selectedPiece.location] = nil // remove the piece from the current location
+	g.selectedPiece.location = moveTo
+	g.pieces[moveTo] = g.selectedPiece // assign the piece to a new location
+	g.selectedPiece = nil
+}
+
 // create a chess piece
 func createPiece(piece chess.Piece, sq chess.Square) *Piece {
 	if piece == chess.NoPiece {

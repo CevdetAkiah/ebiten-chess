@@ -24,7 +24,6 @@ func (g *Game) updateCellColours(sq chess.Square) {
 	validSquare(g, cell, piece)
 }
 
-// TODO: fill in cell with piece image if piece is on valid square
 // show the valid squares on the board
 func validSquare(g *Game, c *cell, p *Piece) {
 	position := g.engine.Position()
@@ -75,7 +74,7 @@ func createChessboard(g *Game) *board {
 	chessboard.cells = make(map[chess.Square]*cell, rows*columns)
 
 	// Create a new image for the grid
-	grid := ebiten.NewImage(screenWidth, screenHeight)
+	grid := ebiten.NewImage(boardWidth, boardHeight)
 	FEN := g.engine.Position().Board().SquareMap()
 	chessboard.grid = grid
 	// Draw the chess grid

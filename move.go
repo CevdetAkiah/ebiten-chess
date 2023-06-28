@@ -4,11 +4,32 @@ import (
 	"github.com/notnil/chess"
 )
 
-func makeMove(g *Game, moveTo chess.Square) {
+func parseMoves(g *Game, moveTo chess.Square) {
 	moves := g.engine.Position().ValidMoves()
 	for _, move := range moves {
 		if move.S1() == g.selectedPiece.location && move.S2() == moveTo {
 			g.engine.Move(move)
+		}
+	}
+}
+
+func (g *Game) makeMove(chessX, chessY int) {
+	// if user has already selected a piece and the clicked square is valid, make the move
+	if g.selectedPiece != nil {
+		moveTo := squareOffset(chessX, chessY)
+		if isValidSquare(g.chessboard.validSquares, moveTo) {
+			// make the move in the engine and update the pieces map
+			parseMoves(g, moveTo)
+			g.updatePieces(moveTo)
+
+			// toggle the players turn on the board
+			if g.playerTurn == "White" {
+				g.playerTurn = "Black"
+			} else {
+				g.playerTurn = "White"
+			}
+			// update the pieces on the board
+			g.updateBoardImage()
 		}
 	}
 }

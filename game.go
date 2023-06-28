@@ -6,11 +6,11 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text"
-	"github.com/hajimehoshi/ebiten/v2/vector"
 	"github.com/notnil/chess"
 )
 
 type Game struct {
+	player        string
 	playerTurn    string
 	buttonPress   bool
 	chessboard    *board
@@ -18,11 +18,17 @@ type Game struct {
 	engine        *chess.Game
 	pieces        map[chess.Square]*Piece
 	selectedPiece *Piece
+	sb            []*startButton
 }
 
 func (g *Game) Update() error {
 	// detect mouse click
 	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
+		mouseX, mouseY := ebiten.CursorPosition()
+
+		if g.gamestart {
+			awaitChoice(g, mouseX, mouseY)
+		}
 		// ignore multiple inputs from the same click
 		if g.buttonPress {
 			g.buttonPress = false
@@ -31,67 +37,15 @@ func (g *Game) Update() error {
 		g.buttonPress = true
 
 		// get mouse click position
-		mouseX, mouseY := ebiten.CursorPosition()
 		chessX, chessY := getChessGridCoordinates(mouseX, mouseY)
 
-		// Make the move
-		// if user has already selected a piece and the clicked square is valid, make the move
-		if g.selectedPiece != nil {
-			moveTo := squareOffset(chessX, chessY)
-			if isValidSquare(g.chessboard.validSquares, moveTo) {
-				// make the move in the engine and update the pieces map
-				makeMove(g, moveTo)
-				g.updatePieces(moveTo)
+		// make the move
+		g.makeMove(chessX, chessY)
 
-				// toggle the players turn on the board
-				if g.playerTurn == "White" {
-					g.playerTurn = "Black"
-				} else {
-					g.playerTurn = "White"
-				}
-				// update the pieces on the board
-				g.updateBoardImage()
-			}
-		}
-
-		// if mouse is clicked on a piece continue
-		if piece := g.pieces[squareOffset(chessX, chessY)]; piece != nil {
-			// turn off previously selected square or valid colour
-			for _, cell := range g.chessboard.cells {
-				cell.turnOffColours(g)
-			}
-			// mark the new cell as selected
-			g.chessboard.cells[piece.location].selected = true
-			g.updateCellColours(piece.location)
-			g.selectedPiece = piece
-		} else {
-			g.buttonPress = false
-		}
-
+		// update board colours
+		g.updateBoardColours(chessX, chessY)
 	}
 	return nil
-}
-
-// re draw the board with the new piece positions
-func (g *Game) updateBoardImage() {
-	FEN := g.engine.Position().Board().SquareMap()
-	for _, cell := range g.chessboard.cells {
-		vector.DrawFilledRect(g.chessboard.grid, cell.xPos, cell.yPos, squareWidth, squareHeight, cell.squareColour, false)
-
-		if piece := FEN[cell.position]; piece != chess.NoPiece {
-			p := g.pieces[cell.position]
-			g.positionPiece(p, cell)
-		}
-	}
-}
-
-// update the piece map with the new piece positions
-func (g *Game) updatePieces(moveTo chess.Square) {
-	// update the pieces map
-	g.pieces[g.selectedPiece.location] = nil // remove the piece from the current location
-	g.selectedPiece.location = moveTo
-	g.pieces[moveTo] = g.selectedPiece // assign the piece to a new location
-	g.selectedPiece = nil
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
@@ -101,16 +55,14 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	// Draw the chessboard
 	screen.DrawImage(g.chessboard.grid, nil)
 
+	font := LoadFont("./fonts/Roboto-Bold.ttf")
 	// Button to pick side
-	if g.gamestart == true {
-		// button to pick a side
-
-		g.gamestart = false
+	if g.gamestart {
+		chooseSide(g, screen, font)
 	} else {
 		// Draw label
 		labelText := strings.ToUpper(g.playerTurn) + " PLAYING"
-		font := LoadFont("./fonts/Roboto-Bold.ttf")
-		label := newLabel(font, labelText, (screenWidth-measureTextWidth(font, labelText))/2, screenHeight+60)
+		label := newLabel(font, labelText, color.White, (boardWidth-measureTextWidth(font, labelText))/2, boardHeight+60)
 		text.Draw(screen, labelText, label.font, label.x, label.y, color.White)
 	}
 
@@ -124,6 +76,7 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeigh
 func NewGame() (*Game, error) {
 	eng := chess.NewGame()
 	game := &Game{
+		player:     "",
 		playerTurn: "White",
 		gamestart:  true,
 		engine:     eng,

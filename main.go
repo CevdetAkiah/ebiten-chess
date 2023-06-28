@@ -7,19 +7,21 @@ import (
 )
 
 const (
+	boardWidth   = 640
+	boardHeight  = 480
 	screenWidth  = 640
-	screenHeight = 480
+	screenHeight = 600
 	rows         = 8
 	columns      = 8
 )
 
 const (
-	squareWidth  = screenWidth / columns
-	squareHeight = screenHeight / rows
+	squareWidth  = boardWidth / columns
+	squareHeight = boardHeight / rows
 )
 
 func main() {
-	ebiten.SetWindowSize(640, 600)
+	ebiten.SetWindowSize(screenWidth, screenHeight)
 	ebiten.SetWindowTitle("CHESS")
 
 	game, err := NewGame()
