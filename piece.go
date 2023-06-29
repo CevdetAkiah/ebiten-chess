@@ -8,7 +8,7 @@ import (
 	"github.com/notnil/chess"
 )
 
-// will need a piece type with user interactivity, and connection to th game engine
+// TODO: need to update the piece image if promoted
 
 // a chess piece model
 type Piece struct {

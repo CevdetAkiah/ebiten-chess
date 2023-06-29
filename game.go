@@ -19,32 +19,51 @@ type Game struct {
 	pieces        map[chess.Square]*Piece
 	selectedPiece *Piece
 	sb            []*startButton
+	winner        string
 }
 
 func (g *Game) Update() error {
-	// detect mouse click
-	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
-		mouseX, mouseY := ebiten.CursorPosition()
+	outcome := g.engine.Outcome()
+	// play until an outcome is decided
+	if outcome == chess.NoOutcome {
+		// detect mouse click
+		if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
+			mouseX, mouseY := ebiten.CursorPosition()
+			// ignore multiple inputs from the same click
+			if g.buttonPress {
+				g.buttonPress = false
+				return nil
+			}
+			g.buttonPress = true
+			if g.gamestart {
+				awaitChoice(g, mouseX, mouseY)
+			}
 
-		if g.gamestart {
-			awaitChoice(g, mouseX, mouseY)
+			// if player turn then play, else it's the ai's turn
+			if g.playerTurn == g.player {
+				// get mouse click position
+				chessX, chessY := getChessGridCoordinates(mouseX, mouseY)
+				// make the move
+				g.makeMove(chessX, chessY)
+				// update board colours
+				g.updateBoardColours(chessX, chessY)
+			} else {
+				// random move // ai
+				randomMove(g)
+			}
+
 		}
-		// ignore multiple inputs from the same click
-		if g.buttonPress {
-			g.buttonPress = false
-			return nil
+	} else {
+		switch outcome {
+		case chess.WhiteWon:
+			g.winner = "WHITE"
+		case chess.BlackWon:
+			g.winner = "BLACK"
+		case chess.Draw:
+			g.winner = "DRAW"
 		}
-		g.buttonPress = true
-
-		// get mouse click position
-		chessX, chessY := getChessGridCoordinates(mouseX, mouseY)
-
-		// make the move
-		g.makeMove(chessX, chessY)
-
-		// update board colours
-		g.updateBoardColours(chessX, chessY)
 	}
+
 	return nil
 }
 
@@ -61,7 +80,16 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		chooseSide(g, screen, font)
 	} else {
 		// Draw label
-		labelText := strings.ToUpper(g.playerTurn) + " PLAYING"
+		var labelText string
+		if g.engine.Outcome() == chess.NoOutcome {
+			labelText = strings.ToUpper(g.playerTurn) + " PLAYING"
+		} else {
+			declaration := " WINS"
+			if g.winner == "DRAW" {
+				declaration = ""
+			}
+			labelText = g.winner + declaration
+		}
 		label := newLabel(font, labelText, color.White, (boardWidth-measureTextWidth(font, labelText))/2, boardHeight+60)
 		text.Draw(screen, labelText, label.font, label.x, label.y, color.White)
 	}
