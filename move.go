@@ -20,6 +20,9 @@ func (g *Game) makeMove(chessX, chessY int) {
 		if isValidSquare(g.chessboard.validSquares, moveTo) {
 			// make the move in the engine and update the pieces map
 			parseMoves(g, moveTo)
+			if isPromotionSquare(g.selectedPiece, moveTo) {
+				setPieceImage(g.selectedPiece, "queen")
+			}
 			g.updatePieces(moveTo)
 
 			// toggle the players turn on the board
@@ -32,4 +35,16 @@ func (g *Game) makeMove(chessX, chessY int) {
 			g.updateBoardImage()
 		}
 	}
+}
+
+func isPromotionSquare(p *Piece, sq chess.Square) bool {
+	if sq == chess.A8 || sq == chess.B8 || sq == chess.C8 || sq == chess.D8 || sq == chess.E8 || sq == chess.F8 || sq == chess.G8 || sq == chess.H8 ||
+		sq == chess.A1 || sq == chess.B1 || sq == chess.C1 || sq == chess.D1 || sq == chess.E1 || sq == chess.F1 || sq == chess.G1 || sq == chess.H1 {
+		if p.pieceType == "pawn" {
+			return true
+		}
+
+	}
+
+	return false
 }

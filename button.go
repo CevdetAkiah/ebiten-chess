@@ -28,7 +28,6 @@ func awaitChoice(g *Game, mouseX, mouseY int) {
 	} else if g.sb[1].chosen {
 		g.player = "Black"
 		g.gamestart = false
-
 	}
 }
 
@@ -59,7 +58,7 @@ func newStartButton(bx, by, bwidth, bheight int, bcolour color.Color, labelText 
 	// Calculate label	 position
 	labelWidth := measureTextWidth(font, labelText)
 	labelX := bx + (bwidth-labelWidth)/2
-	labelY := by + (screenHeight-boardHeight)/2 + font.Metrics().Height.Ceil()/2
+	labelY := by + ((screenHeight-boardHeight)+font.Metrics().Height.Ceil())/2
 
 	button.label = newLabel(font, labelText, labelColour, labelX, labelY)
 	return button

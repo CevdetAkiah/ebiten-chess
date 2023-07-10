@@ -6,7 +6,12 @@ import (
 )
 
 func randomMove(g *Game) {
+	time.Sleep(500 * time.Millisecond)
 	rand.Seed(time.Now().Unix())
+	// return if no side chosen
+	if g.player == "" {
+		return
+	}
 	valid := g.engine.Position().ValidMoves()
 	m := valid[rand.Intn(len(valid))]
 	s1 := m.S1()

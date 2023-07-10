@@ -13,8 +13,8 @@ import (
 // a chess piece model
 type Piece struct {
 	location  chess.Square
-	pieceType chess.PieceType
-	side      chess.Color
+	pieceType string
+	side      string
 	image     *ebiten.Image
 }
 
@@ -24,6 +24,7 @@ func (g *Game) updatePieces(moveTo chess.Square) {
 	g.pieces[g.selectedPiece.location] = nil // remove the piece from the current location
 	g.selectedPiece.location = moveTo
 	g.pieces[moveTo] = g.selectedPiece // assign the piece to a new location
+
 	g.selectedPiece = nil
 }
 
@@ -57,15 +58,21 @@ func createPiece(piece chess.Piece, sq chess.Square) *Piece {
 		pType = "king"
 	}
 
-	path := fmt.Sprintf("piecePNG/%s/%s.png", colour, pType)
+	chessPiece := &Piece{
+		pieceType: pType,
+		side:      colour,
+		image:     nil,
+		location:  sq,
+	}
+	setPieceImage(chessPiece, pType)
+	return chessPiece
+}
+
+// set the piece image
+func setPieceImage(p *Piece, pType string) {
+	path := fmt.Sprintf("piecePNG/%s/%s.png", p.side, pType)
 
 	pieceImage, _, _ := ebitenutil.NewImageFromFile(path)
 
-	chessPiece := &Piece{
-		pieceType: piece.Type(),
-		side:      piece.Color(),
-		image:     pieceImage,
-		location:  sq,
-	}
-	return chessPiece
+	p.image = pieceImage
 }

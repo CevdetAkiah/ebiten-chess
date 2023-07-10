@@ -26,19 +26,19 @@ func (g *Game) Update() error {
 	outcome := g.engine.Outcome()
 	// play until an outcome is decided
 	if outcome == chess.NoOutcome {
+
 		// detect mouse click
 		if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
-			mouseX, mouseY := ebiten.CursorPosition()
 			// ignore multiple inputs from the same click
 			if g.buttonPress {
 				g.buttonPress = false
 				return nil
 			}
 			g.buttonPress = true
+			mouseX, mouseY := ebiten.CursorPosition()
 			if g.gamestart {
 				awaitChoice(g, mouseX, mouseY)
 			}
-
 			// if player turn then play, else it's the ai's turn
 			if g.playerTurn == g.player {
 				// get mouse click position
