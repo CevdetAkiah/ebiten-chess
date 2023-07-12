@@ -8,8 +8,6 @@ import (
 	"github.com/notnil/chess"
 )
 
-// TODO: need to update the piece image if promoted
-
 // a chess piece model
 type Piece struct {
 	location  chess.Square

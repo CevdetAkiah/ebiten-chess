@@ -7,10 +7,12 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text"
 	"github.com/notnil/chess"
+	"github.com/notnil/chess/uci"
 )
 
 type Game struct {
 	player        string
+	stockfish     *uci.Engine
 	playerTurn    string
 	buttonPress   bool
 	chessboard    *board
@@ -43,13 +45,16 @@ func (g *Game) Update() error {
 			if g.playerTurn == g.player {
 				// get mouse click position
 				chessX, chessY := getChessGridCoordinates(mouseX, mouseY)
+				moveTo := squareOffset(chessX, chessY)
 				// make the move
-				g.makeMove(chessX, chessY)
+				g.makeMove(moveTo)
 				// update board colours
 				g.updateBoardColours(chessX, chessY)
 			} else {
 				// random move // ai
-				randomMove(g)
+				move := g.uciMove()
+				g.selectedPiece = g.pieces[move.S1()]
+				g.makeMove(move.S2())
 			}
 
 		}
@@ -103,8 +108,10 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeigh
 // start a new game
 func NewGame() (*Game, error) {
 	eng := chess.NewGame()
+	sf := uciStockFish()
 	game := &Game{
 		player:     "",
+		stockfish:  sf,
 		playerTurn: "White",
 		gamestart:  true,
 		engine:     eng,

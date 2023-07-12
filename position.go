@@ -40,3 +40,23 @@ func getChessGridCoordinates(x, y int) (int, int) {
 	row := y / squareHeight
 	return column, row
 }
+
+func isPromotionSquare(p *Piece, sq chess.Square) bool {
+	if sq == chess.A8 || sq == chess.B8 || sq == chess.C8 || sq == chess.D8 || sq == chess.E8 || sq == chess.F8 || sq == chess.G8 || sq == chess.H8 ||
+		sq == chess.A1 || sq == chess.B1 || sq == chess.C1 || sq == chess.D1 || sq == chess.E1 || sq == chess.F1 || sq == chess.G1 || sq == chess.H1 {
+		if p.pieceType == "pawn" {
+			return true
+		}
+
+	}
+	return false
+}
+
+func appendValidSquares(validSquares []chess.Square, moves []*chess.Move, p *Piece) []chess.Square {
+	for _, move := range moves {
+		if move.S1() == p.location {
+			validSquares = append(validSquares, move.S2())
+		}
+	}
+	return validSquares
+}

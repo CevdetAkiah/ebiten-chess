@@ -13,13 +13,13 @@ func parseMoves(g *Game, moveTo chess.Square) {
 	}
 }
 
-func (g *Game) makeMove(chessX, chessY int) {
+func (g *Game) makeMove(moveTo chess.Square) {
 	// if user has already selected a piece and the clicked square is valid, make the move
 	if g.selectedPiece != nil {
-		moveTo := squareOffset(chessX, chessY)
 		if isValidSquare(g.chessboard.validSquares, moveTo) {
 			// make the move in the engine and update the pieces map
 			parseMoves(g, moveTo)
+			// if pawn to promote then update the pawn image
 			if isPromotionSquare(g.selectedPiece, moveTo) {
 				setPieceImage(g.selectedPiece, "queen")
 			}
@@ -35,16 +35,4 @@ func (g *Game) makeMove(chessX, chessY int) {
 			g.updateBoardImage()
 		}
 	}
-}
-
-func isPromotionSquare(p *Piece, sq chess.Square) bool {
-	if sq == chess.A8 || sq == chess.B8 || sq == chess.C8 || sq == chess.D8 || sq == chess.E8 || sq == chess.F8 || sq == chess.G8 || sq == chess.H8 ||
-		sq == chess.A1 || sq == chess.B1 || sq == chess.C1 || sq == chess.D1 || sq == chess.E1 || sq == chess.F1 || sq == chess.G1 || sq == chess.H1 {
-		if p.pieceType == "pawn" {
-			return true
-		}
-
-	}
-
-	return false
 }

@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+// stand in for stockfish
 func randomMove(g *Game) {
 	time.Sleep(500 * time.Millisecond)
 	rand.Seed(time.Now().Unix())

@@ -33,11 +33,8 @@ func validSquare(g *Game, c *cell, p *Piece) {
 	g.chessboard.validSquares = nil
 
 	// gather the valid moves for selected piece
-	for _, move := range moves {
-		if move.S1() == p.location {
-			g.chessboard.validSquares = append(g.chessboard.validSquares, move.S2())
-		}
-	}
+
+	g.chessboard.validSquares = appendValidSquares(g.chessboard.validSquares, moves, p)
 
 	// apply valid colour
 	for _, sq := range g.chessboard.validSquares {
