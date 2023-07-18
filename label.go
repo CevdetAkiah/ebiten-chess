@@ -2,7 +2,6 @@ package main
 
 import (
 	"image/color"
-	"io/ioutil"
 	"log"
 
 	"golang.org/x/image/font"
@@ -29,7 +28,7 @@ func newLabel(font font.Face, labelString string, colour color.Color, x int, y i
 }
 
 func LoadFont(path string) font.Face {
-	fontBytes, err := ioutil.ReadFile(path)
+	fontBytes, err := embeddedFiles.ReadFile(path)
 	if err != nil {
 		log.Fatal(err)
 	}

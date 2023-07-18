@@ -1,10 +1,16 @@
 package main
 
 import (
+	"embed"
 	"log"
 
 	"github.com/hajimehoshi/ebiten/v2"
 )
+
+// using to embed images within the app. Easier usage within website
+//
+//go:embed static/*
+var embeddedFiles embed.FS
 
 const (
 	boardWidth   = 640

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -67,10 +68,20 @@ func createPiece(piece chess.Piece, sq chess.Square) *Piece {
 }
 
 // set the piece image
-func setPieceImage(p *Piece, pType string) {
-	path := fmt.Sprintf("piecePNG/%s/%s.png", p.side, pType)
+func setPieceImage(p *Piece, pType string) error {
+	path := fmt.Sprintf("static/piecePNG/%s/%s.png", p.side, pType)
 
-	pieceImage, _, _ := ebitenutil.NewImageFromFile(path)
+	fileContent, err := embeddedFiles.ReadFile(path)
+	if err != nil {
+		return fmt.Errorf("error reading png: %b", err)
+	}
+
+	pieceImage, _, err := ebitenutil.NewImageFromReader(bytes.NewReader(fileContent))
+
+	if err != nil {
+		return err
+	}
 
 	p.image = pieceImage
+	return nil
 }
