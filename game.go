@@ -52,10 +52,11 @@ func (g *Game) Update() error {
 				g.updateBoardColours(chessX, chessY)
 			} else {
 				// random move // ai
-				randomMove(g)
-				// move := g.uciMove()
-				// g.selectedPiece = g.pieces[move.S1()]
-				// g.makeMove(move.S2())
+				// randomMove(g)
+				// stockfish move
+				move := g.uciMove()
+				g.selectedPiece = g.pieces[move.S1()]
+				g.makeMove(move.S2())
 			}
 
 		}
@@ -109,10 +110,10 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeigh
 // start a new game
 func NewGame() (*Game, error) {
 	eng := chess.NewGame()
-	// sf := uciStockFish()
+	sf := uciStockFish()
 	game := &Game{
-		player: "",
-		// stockfish:  sf,
+		player:     "",
+		stockfish:  sf,
 		playerTurn: "White",
 		gamestart:  true,
 		engine:     eng,
