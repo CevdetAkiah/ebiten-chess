@@ -10,8 +10,6 @@ import (
 	"github.com/notnil/chess/uci"
 )
 
-// TODO:fix castling
-
 type Game struct {
 	player        string
 	stockfish     *uci.Engine

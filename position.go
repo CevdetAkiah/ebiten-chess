@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/notnil/chess"
 )
@@ -19,10 +17,6 @@ func squareOffset(column, row int) chess.Square {
 // position the piece on the board according to the cell it occupies
 func (g *Game) positionPiece(p *Piece, cell *cell) {
 	// get the values needed to center the image on the cell
-	if p == nil {
-		fmt.Println("PEICE IS NIL")
-		return
-	}
 	imageWidth, imageHeight := p.image.Bounds().Dx(), p.image.Bounds().Dy()
 	centerX := float64(cell.xPos) + float64(squareWidth)/2 - float64(imageWidth)/2
 	centerY := float64(cell.yPos) + float64(squareHeight)/2 - float64(imageHeight)/2
@@ -48,12 +42,11 @@ func getChessGridCoordinates(x, y int) (int, int) {
 }
 
 func isPromotionSquare(p *Piece, sq chess.Square) bool {
-	if sq == chess.A8 || sq == chess.B8 || sq == chess.C8 || sq == chess.D8 || sq == chess.E8 || sq == chess.F8 || sq == chess.G8 || sq == chess.H8 ||
-		sq == chess.A1 || sq == chess.B1 || sq == chess.C1 || sq == chess.D1 || sq == chess.E1 || sq == chess.F1 || sq == chess.G1 || sq == chess.H1 {
-		if p.pieceType == "pawn" {
+	if p.pieceType == "pawn" {
+		if sq == chess.A8 || sq == chess.B8 || sq == chess.C8 || sq == chess.D8 || sq == chess.E8 || sq == chess.F8 || sq == chess.G8 || sq == chess.H8 ||
+			sq == chess.A1 || sq == chess.B1 || sq == chess.C1 || sq == chess.D1 || sq == chess.E1 || sq == chess.F1 || sq == chess.G1 || sq == chess.H1 {
 			return true
 		}
-
 	}
 	return false
 }
