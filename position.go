@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/notnil/chess"
 )
@@ -17,6 +19,10 @@ func squareOffset(column, row int) chess.Square {
 // position the piece on the board according to the cell it occupies
 func (g *Game) positionPiece(p *Piece, cell *cell) {
 	// get the values needed to center the image on the cell
+	if p == nil {
+		fmt.Println("PEICE IS NIL")
+		return
+	}
 	imageWidth, imageHeight := p.image.Bounds().Dx(), p.image.Bounds().Dy()
 	centerX := float64(cell.xPos) + float64(squareWidth)/2 - float64(imageWidth)/2
 	centerY := float64(cell.yPos) + float64(squareHeight)/2 - float64(imageHeight)/2

@@ -17,10 +17,27 @@ type Piece struct {
 	image     *ebiten.Image
 }
 
+// TODO: castling needs to be fixed in updatePieces in piece.go
 // update the piece map with the new piece positions
 func (g *Game) updatePieces(moveTo chess.Square) {
 	// update the pieces map
 	g.pieces[g.selectedPiece.location] = nil // remove the piece from the current location
+	if g.selectedPiece.pieceType == "king" {
+		switch moveTo {
+		case chess.G1: // white short castle
+			rook := g.pieces[chess.H1]
+			g.pieces[chess.F1] = rook
+		case chess.C1: // white long castle
+			rook := g.pieces[chess.A1]
+			g.pieces[chess.D1] = rook
+		case chess.G8: // black short castle
+			rook := g.pieces[chess.H8]
+			g.pieces[chess.F8] = rook
+		case chess.C8: // black long castle
+			rook := g.pieces[chess.A8]
+			g.pieces[chess.D8] = rook
+		}
+	}
 	g.selectedPiece.location = moveTo
 	g.pieces[moveTo] = g.selectedPiece // assign the piece to a new location
 

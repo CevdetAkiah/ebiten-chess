@@ -59,6 +59,9 @@ func (g *Game) updateBoardImage() {
 		vector.DrawFilledRect(g.chessboard.grid, cell.xPos, cell.yPos, squareWidth, squareHeight, cell.squareColour, false)
 
 		if piece := FEN[cell.position]; piece != chess.NoPiece {
+			if piece.Type().String() == "r" {
+
+			}
 			p := g.pieces[cell.position]
 			g.positionPiece(p, cell)
 		}

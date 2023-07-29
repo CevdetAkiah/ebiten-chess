@@ -1,14 +1,25 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/notnil/chess"
 )
 
+// make the move in the engine
 func parseMoves(g *Game, moveTo chess.Square) {
 	moves := g.engine.Position().ValidMoves()
 	for _, move := range moves {
 		if move.S1() == g.selectedPiece.location && move.S2() == moveTo {
 			g.engine.Move(move)
+			fmt.Println(move)
+			// take care of castling
+			if move.HasTag(chess.KingSideCastle) {
+				fmt.Println("CASTLING")
+				// g.engine.MoveStr("h1f1")
+
+				fmt.Println(g.engine.Position().Board().Piece(chess.F1))
+			}
 		}
 	}
 }
