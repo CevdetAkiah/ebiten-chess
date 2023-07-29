@@ -43,24 +43,24 @@ func (g *Game) Update() error {
 			if g.gamestart {
 				awaitChoice(g, mouseX, mouseY)
 			}
-			// if player turn then play, else it's the ai's turn
-			if g.playerTurn == g.player {
-				// get mouse click position
-				chessX, chessY := getChessGridCoordinates(mouseX, mouseY)
-				moveTo := squareOffset(chessX, chessY)
-				// make the move
-				g.makeMove(moveTo)
-				// update board colours
-				g.updateBoardColours(chessX, chessY)
-			} else {
-				// random move // ai
-				// randomMove(g)
-				// stockfish move
-				move := g.uciMove()
-				g.selectedPiece = g.pieces[move.S1()]
-				g.makeMove(move.S2())
-			}
 
+			if !g.gamestart {
+				// if player turn then play, else it's the ai's turn
+				if g.playerTurn == g.player {
+					// get mouse click position
+					chessX, chessY := getChessGridCoordinates(mouseX, mouseY)
+					moveTo := squareOffset(chessX, chessY)
+					// make the move
+					g.makeMove(moveTo)
+					// update board colours
+					g.updateBoardColours(chessX, chessY)
+				} else {
+					// stockfish move
+					move := g.uciMove()
+					g.selectedPiece = g.pieces[move.S1()]
+					g.makeMove(move.S2())
+				}
+			}
 		}
 	} else {
 		switch outcome {

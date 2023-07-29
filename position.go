@@ -66,3 +66,29 @@ func appendValidSquares(validSquares []chess.Square, moves []*chess.Move, p *Pie
 	}
 	return validSquares
 }
+
+func processCastling(g *Game, moveTo chess.Square) {
+	switch moveTo {
+	case chess.G1: // white short castle
+		rook := g.pieces[chess.H1]
+		g.pieces[chess.F1] = rook
+	case chess.C1: // white long castle
+		rook := g.pieces[chess.A1]
+		g.pieces[chess.D1] = rook
+	case chess.G8: // black short castle
+		rook := g.pieces[chess.H8]
+		g.pieces[chess.F8] = rook
+	case chess.C8: // black long castle
+		rook := g.pieces[chess.A8]
+		g.pieces[chess.D8] = rook
+	}
+}
+
+func checkCastling(pieceType string, moveTo chess.Square) bool {
+	if pieceType == "king" {
+		if moveTo == chess.C1 || moveTo == chess.G1 || moveTo == chess.C8 || moveTo == chess.G8 {
+			return true
+		}
+	}
+	return false
+}
